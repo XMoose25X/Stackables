@@ -9,12 +9,16 @@ import {
   VFooter,
   VList,
   VBtn,
+  VTooltip,
   VIcon,
   VGrid,
   VToolbar,
+  VCard,
+  VDialog,
   transitions
 } from 'vuetify'
 import '../node_modules/vuetify/src/stylus/app.styl'
+import { Slider } from 'vue-color'
 
 Vue.use(Vuetify, {
   components: {
@@ -26,7 +30,11 @@ Vue.use(Vuetify, {
     VIcon,
     VGrid,
     VToolbar,
-    transitions
+    transitions,
+    VTooltip,
+    VCard,
+    VDialog,
+    'color-picker': Slider
   },
   theme: {
     primary: '#ee44aa',
@@ -40,7 +48,6 @@ Vue.use(Vuetify, {
 })
 
 Vue.config.productionTip = false
-
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
