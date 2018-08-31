@@ -1,4 +1,4 @@
-# stackables
+# Stackables
 
 > Single Page Application used for visually organizing stackable objects.
 > Current Bug with Navigation Drawer - https://github.com/vuetifyjs/vuetify/issues/4808

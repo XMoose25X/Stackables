@@ -23,7 +23,7 @@
             <v-list-tile-action>
               <v-icon :color="group.color">group_work</v-icon>
             </v-list-tile-action>
-            <v-list-tile-title>Group {{index + 1}}</v-list-tile-title>
+            <v-list-tile-title>{{group.name}}</v-list-tile-title>
           </v-list-tile>
           <v-list-tile @click="dialog=true; colors=group.color; active=group" ripple>
             <v-list-tile-title>Change Color</v-list-tile-title>
@@ -41,10 +41,10 @@
             <v-list-tile slot="activator">
               <v-list-tile-title>Items</v-list-tile-title>
             </v-list-tile>
-            <v-list-tile v-for="(object) in group.list" :key="object.id">
+            <v-list-tile v-for="(object, index2) in group.list" :key="object.id">
               <v-list-tile-title v-text="object.value"></v-list-tile-title>
               <v-list-tile-action>
-                <v-icon @click="group.remove(object.id)">remove</v-icon>
+                <v-icon @click="group.remove(index2)">remove</v-icon>
               </v-list-tile-action>
             </v-list-tile>
           </v-list-group>
@@ -96,6 +96,9 @@
     </v-navigation-drawer>
     <v-toolbar app fixed clipped-left>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <a href="#" class="d-flex">
+        <img :src="require('@/assets/Stackables(Clean).svg')" width="50px" height="50px"/>
+      </a>
       <v-toolbar-title>Stackables</v-toolbar-title>
     </v-toolbar>
     <v-content>
@@ -148,9 +151,10 @@ export default {
   data: () => ({
     drawer: false,
     dialog: false,
-    items: [ new Group(1, '#82b1ff', [new Object(1.1, 'A'), new Object(1.2, 'B'), new Object(1.3, 'C')]),
-      new Group(2, '#ff80ab', [new Object(2.1, 'D'), new Object(2.2, 'E'), new Object(2.3, 'F')]),
-      new Group(3, '#b9f6ca', [new Object(3.1, 'G'), new Object(3.2, 'H'), new Object(3.3, 'I'), new Object(3.4, 'J'), new Object(3.5, 'K')]) ],
+    items: [ new Group(1, 'Cool Blues', '#82b1ff', [new Object(1.1, 'S'), new Object(1.2, 'T'), new Object(1.3, 'A')]),
+      new Group(2, 'Hot Reds', '#ff80ab', [new Object(2.1, 'C'), new Object(2.2, 'K'), new Object(2.3, 'A')]),
+      new Group(3, 'Leafy Greens', '#b9f6ca', [new Object(3.1, 'B'), new Object(3.2, 'L'), new Object(3.3, 'E'), new Object(3.4, 'S')]) ],
+    names: ["Collection", "Group", "Assemblage", "Assortment", "Compilation", "Lot", "Selection", "Set", "Accumulation", "Stack", "Kit", "Hoard", "Heap", "Grathering", "Cluster", "Clump", "Batch"],
     options: {
       borderRadius: 100
     },
@@ -229,7 +233,7 @@ export default {
       this.items.splice(index, 1)
     },
     addGroup: function () {
-      this.items.push(new Group(this.generateGroupId(), 'gray', []))
+      this.items.push(new Group(this.generateGroupId(), this.names[this.randomInt(this.names.length)], this.random_rgba(), []))
     },
     shuffle: function (id) {
       var index = this.getIndexOfGroup(id)
@@ -261,12 +265,17 @@ export default {
           border: '1px solid #4a4a4a'
         }
       }
+    },
+    random_rgba: function() {
+    var o = Math.round, r = Math.random, s = 255;
+    return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + r().toFixed(1) + ')';
     }
   }
 }
 class Group {
-  constructor (id, color, list) {
+  constructor (id, name, color, list) {
     this.id = id
+    this.name = name
     this.color = color
     this.list = list
     this.editing = false
