@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "npm": "^6.4.1",
-    "print-js": "^1.0.50",
     "vue": "^2.5.2",
     "vue-color": "^2.6.0",
     "vuetify": "^1.2.1"

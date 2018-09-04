@@ -1,6 +1,6 @@
 <template>
   <v-app id="inspire" dark>
-    <v-navigation-drawer v-model="drawer" clipped temporary app :stateless="dialog">
+    <v-navigation-drawer v-model="drawer" hide-overlay clipped temporary app :stateless="dialog">
       <v-list dense>
         <v-list-group v-for="(group, index) in items" v-bind:key="index" no-action>
           <v-list-tile slot="activator">
@@ -95,16 +95,16 @@
     <v-content>
       <v-container fluid fill-height>
         <v-layout justify-center align-center>
-          <div class="object-container" id="print">
-            <div v-for="(row, index) in this.lists" :key="row.length">
+          <div class="object-container" id="print" style="height: 100%; width: 100%" ref="canvas">
+            <div v-for="(row, index) in this.lists" :key="row.length" style="white-space: nowrap">
               <transition-group name="list-complete" tag="div" :key="'t'+row.length">
                 <span v-for="(item, index2) in row" :key="item.id" class="list-complete-item" :style="getStyle(item.id)">{{ item.value }}</span>
               </transition-group>
             </div>
           </div>
-          <div>Total: {{totalItems}}</div>
-          <div>Rows: {{triangularNumber}}</div>
-          <v-btn absolute dark fab bottom right color="pink" :style="moveForBottomNavStyle" @click="printStack()">
+          <!-- <div>Total: {{totalItems}}</div>
+          <div>Rows: {{triangularNumber}}</div> -->
+          <v-btn absolute dark fab bottom right color="pink" :style="moveForBottomNavStyle" @click="printStackables()">
             <v-icon>print</v-icon>
           </v-btn>
         </v-layout>
@@ -117,9 +117,10 @@
 </template>
 
 <script>
-import 'print-js'
 export default {
   mounted: function () {
+    window.addEventListener('resize', this.handleResize)
+    this.handleResize()
     if (localStorage.items) {
       this.items = JSON.parse(localStorage.items);
     } else {
@@ -137,7 +138,9 @@ export default {
       borderRadius: 100
     },
     active: null,
-    colors: 'black'
+    colors: 'black',
+    fullHeight: document.documentElement.height,
+    fullWidth: document.documentElement.width
   }),
   props: {
     source: String
@@ -192,11 +195,19 @@ export default {
         correct[j - 1] = results.splice(0, j)
       }
       return correct
+    },
+    size: function () {
+      return (Math.min(this.fullHeight, this.fullWidth) / this.triangularNumber) + "px"
     }
   },
   methods: {
-    printStack: function () {
-      printJS({printable: 'print', type: 'html', targetStyles: ['*']})
+    printStackables: function () {
+      window.print()
+    },
+    handleResize (event) {
+      var area = this.$refs.canvas
+      this.fullHeight = area.clientHeight
+      this.fullWidth = area.clientWidth
     },
     updateGroup: function (color) {
       this.active.color = color.hex
@@ -250,20 +261,27 @@ export default {
       if (id < '0') {
         return {
           backgroundColor: 'transparent',
-          border: '1px dotted gray'
+          border: '1px dotted gray',
+          height: this.size,
+          width: this.size
         }
       } else {
         var yes = this.items[this.getIndexOfGroup(this.getGroupIdFromItemId(id))].color
         return {
           color: '#4a4a4a',
           backgroundColor: yes,
-          border: '1px solid #4a4a4a'
+          border: '1px solid #4a4a4a',
+          height: this.size,
+          width: this.size
         }
       }
     },
     random_rgba: function() {
     var o = Math.round, r = Math.random, s = 255;
     return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + r().toFixed(1) + ')';
+    },
+    getHeight: function() {
+      return "max-height:" + (100 / this.triangularNumber) + "%"
     }
   }
 }
@@ -291,7 +309,7 @@ class Object {
   text-align: center;
 }
 .list-complete-item {
-  transition: all 1s;
+  transition: all 1s, width 0s, height 0s;
   display: inline-flex;
   justify-content: center;
   align-content: center;
@@ -320,5 +338,13 @@ class Object {
 }
 .list-complete-move {
   margin: auto;
+}
+@media print {
+  * {
+    visibility: hidden;
+  }
+  #print, #print * {
+    visibility: visible;
+  }
 }
 </style>
