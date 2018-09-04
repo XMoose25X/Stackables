@@ -28,7 +28,7 @@
             <v-list-tile v-for="(object, index2) in group.list" :key="object.id">
               <v-list-tile-title v-text="object.value"></v-list-tile-title>
               <v-list-tile-action>
-                <v-icon @click="group.remove(index2)">remove</v-icon>
+                <v-icon @click="removeItemFromGroup(index, index2)">remove</v-icon>
               </v-list-tile-action>
             </v-list-tile>
           </v-list-group>
@@ -95,24 +95,24 @@
     <v-content>
       <v-container fluid fill-height>
         <v-layout justify-center align-center>
-          <div class="object-container" id="print" style="height: 100%; width: 100%" ref="canvas">
-            <div v-for="(row, index) in this.lists" :key="row.length" style="white-space: nowrap">
+          <div class="object-container" id="print" :style="cssProps" ref="canvas">
+            <div v-for="(row) in this.lists" :key="row.length" style="white-space: nowrap">
               <transition-group name="list-complete" tag="div" :key="'t'+row.length">
-                <span v-for="(item, index2) in row" :key="item.id" class="list-complete-item" :style="getStyle(item.id)">{{ item.value }}</span>
+                <span v-for="(item) in row" :key="item.id" class="list-complete-item" :style="getStyle(item.id)">{{ item.value }}</span>
               </transition-group>
             </div>
           </div>
           <!-- <div>Total: {{totalItems}}</div>
           <div>Rows: {{triangularNumber}}</div> -->
-          <v-btn absolute dark fab bottom right color="pink" :style="moveForBottomNavStyle" @click="printStackables()">
-            <v-icon>print</v-icon>
-          </v-btn>
         </v-layout>
       </v-container>
     </v-content>
     <v-footer app fixed>
       <span>Mathew Moose &copy; 2018</span>
     </v-footer>
+    <v-btn absolute dark fab bottom right color="pink" :style="moveForBottomNavStyle" @click="printStackables()">
+      <v-icon>print</v-icon>
+    </v-btn>
   </v-app>
 </template>
 
@@ -122,18 +122,18 @@ export default {
     window.addEventListener('resize', this.handleResize)
     this.handleResize()
     if (localStorage.items) {
-      this.items = JSON.parse(localStorage.items);
+      this.items = JSON.parse(localStorage.items)
     } else {
       this.items = [ new Group(1, 'Cool Blues', '#82b1ff', [new Object(1.1, 'S'), new Object(1.2, 'T'), new Object(1.3, 'A')]),
-      new Group(2, 'Hot Reds', '#ff80ab', [new Object(2.1, 'C'), new Object(2.2, 'K'), new Object(2.3, 'A')]),
-      new Group(3, 'Leafy Greens', '#b9f6ca', [new Object(3.1, 'B'), new Object(3.2, 'L'), new Object(3.3, 'E'), new Object(3.4, 'S')]) ]
+        new Group(2, 'Hot Reds', '#ff80ab', [new Object(2.1, 'C'), new Object(2.2, 'K'), new Object(2.3, 'A')]),
+        new Group(3, 'Leafy Greens', '#b9f6ca', [new Object(3.1, 'B'), new Object(3.2, 'L'), new Object(3.3, 'E'), new Object(3.4, 'S')]) ]
     }
   },
   data: () => ({
     drawer: false,
     dialog: false,
     items: [],
-    names: ["Collection", "Group", "Assemblage", "Assortment", "Compilation", "Lot", "Selection", "Set", "Accumulation", "Stack", "Kit", "Hoard", "Heap", "Grathering", "Cluster", "Clump", "Batch"],
+    names: ['Collection', 'Group', 'Assemblage', 'Assortment', 'Compilation', 'Lot', 'Selection', 'Set', 'Accumulation', 'Stack', 'Kit', 'Hoard', 'Heap', 'Grathering', 'Cluster', 'Clump', 'Batch'],
     options: {
       borderRadius: 100
     },
@@ -147,18 +147,18 @@ export default {
   },
   watch: {
     items: {
-    handler() {
-      localStorage.items = JSON.stringify(this.items);
-    },
-      deep: true,
-    },
+      handler () {
+        localStorage.items = JSON.stringify(this.items)
+      },
+      deep: true
+    }
   },
   computed: {
-    moveForBottomNavStyle() {
-      return "bottom: 10px"
+    moveForBottomNavStyle () {
       if (this.$vuetify.breakpoint.smAndDown) {
         return "bottom: 32px"
       }
+      return 'bottom: 70px'
     },
     styles: function (i) {
       return {
@@ -197,7 +197,15 @@ export default {
       return correct
     },
     size: function () {
-      return (Math.min(this.fullHeight, this.fullWidth) / this.triangularNumber) + "px"
+      console.log(this.$vuetify.breakpoint.smAndDown)
+      return (Math.min(this.fullHeight - (this.$vuetify.breakpoint.smAndDown ? 0 : 16), this.fullWidth) / this.triangularNumber) + 'px'
+    },
+    cssProps: function () {
+      return {
+        'height': '100%',
+        'width': '100%',
+        '--object-size': this.size
+      }
     }
   },
   methods: {
@@ -238,6 +246,9 @@ export default {
       this.items[index].list.splice(0)
       this.items.splice(index, 1)
     },
+    removeItemFromGroup: function (groupId, objectId){
+      this.items[groupId].list.splice(objectId, 1)
+    },
     addGroup: function () {
       this.items.push(new Group(this.generateGroupId(), this.names[this.randomInt(this.names.length)], this.random_rgba(), []))
     },
@@ -261,27 +272,23 @@ export default {
       if (id < '0') {
         return {
           backgroundColor: 'transparent',
-          border: '1px dotted gray',
-          height: this.size,
-          width: this.size
+          border: '1px dotted gray'
         }
       } else {
         var yes = this.items[this.getIndexOfGroup(this.getGroupIdFromItemId(id))].color
         return {
           color: '#4a4a4a',
           backgroundColor: yes,
-          border: '1px solid #4a4a4a',
-          height: this.size,
-          width: this.size
+          border: '1px solid #4a4a4a'
         }
       }
     },
-    random_rgba: function() {
-    var o = Math.round, r = Math.random, s = 255;
-    return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + r().toFixed(1) + ')';
+    random_rgba: function () {
+      var o = Math.round, r = Math.random, s = 255
+      return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + r().toFixed(1) + ')'
     },
-    getHeight: function() {
-      return "max-height:" + (100 / this.triangularNumber) + "%"
+    getHeight: function () {
+      return 'max-height:' + (100 / this.triangularNumber) + '%'
     }
   }
 }
@@ -314,8 +321,8 @@ class Object {
   justify-content: center;
   align-content: center;
   flex-direction: column;
-  width: 4em;
-  height: 4em;
+  width: var(--object-size);
+  height: var(--object-size);
   border-radius: 50%;
   overflow: hidden;
   text-align: center;
@@ -346,5 +353,8 @@ class Object {
   #print, #print * {
     visibility: visible;
   }
+}
+.v-content{
+  /* padding: 56px 0px 32px !important */
 }
 </style>
