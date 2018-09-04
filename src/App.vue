@@ -2,22 +2,6 @@
   <v-app id="inspire" dark>
     <v-navigation-drawer v-model="drawer" clipped temporary app :stateless="dialog">
       <v-list dense>
-        <!-- <v-list-tile @click="">
-          <v-list-tile-action>
-            <v-icon>dashboard</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Dashboard</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile @click="">
-          <v-list-tile-action>
-            <v-icon>settings</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Settings</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile> -->
         <v-list-group v-for="(group, index) in items" v-bind:key="index" no-action>
           <v-list-tile slot="activator">
             <v-list-tile-action>
@@ -54,24 +38,6 @@
               <v-icon color="red">remove_circle_outline</v-icon>
             </v-list-tile-action>
           </v-list-tile>
-          <!-- <li style="text-align:left">
-            <span :style="{color: group.color}">
-              <font-awesome-icon :icon="['far', 'minus-square']" @click="removeGroup(group.id)" style="color:red"/>
-              Group {{index + 1}}:
-              <font-awesome-icon :icon="['far', 'random']" @click="shuffle(group.id)"/>
-              <font-awesome-icon :icon="['far', 'pencil']" @click="group.editing = !group.editing"/>
-              <input type="color" v-model="group.color"/>
-            </span>
-            <ul style="text-align:left;">
-              <li v-for="(object, index2) in group.list" :key="object.id">
-                  <span>
-                    <font-awesome-icon :icon="['fas', 'minus']"  @click="group.remove(index2)" style="color:red"/>
-                    <input v-if="group.editing" v-model="object.value"/>
-                    <span v-else>{{object.value}}</span>
-                  </span>
-              </li>
-            </ul>
-          </li> -->
         </v-list-group>
         <v-list-tile @click="addGroup()" ripple>
           <v-list-tile-title>Add Group</v-list-tile-title>
@@ -97,38 +63,39 @@
     <v-toolbar app fixed clipped-left>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <a href="#" class="d-flex">
-        <img :src="require('@/assets/Stackables(Clean).svg')" width="50px" height="50px"/>
+        <img :src="require('@/assets/Stackables(Gradiant Cleaned).svg')" width="50px" height="50px"/>
       </a>
-      <v-toolbar-title>Stackables</v-toolbar-title>
+      <v-toolbar-title class="hidden-xs-only">Stackables</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-tooltip bottom>
+        <v-btn icon slot="activator">
+          <v-icon>import_export</v-icon>
+        </v-btn>
+        <span>Import/Export</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <v-btn icon slot="activator">
+          <v-icon>settings</v-icon>
+        </v-btn>
+        <span>Settings</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <v-btn icon slot="activator">
+          <v-icon>info</v-icon>
+        </v-btn>
+        <span>About</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <v-btn icon slot="activator" href="https://github.com/XMoose25X/Stackables" target="_blank">
+          <v-icon>code</v-icon>
+        </v-btn>
+        <span>Source</span>
+      </v-tooltip>
     </v-toolbar>
     <v-content>
-      <!-- <v-container fluid fill-height>
-        <v-layout justify-center align-center>
-          <v-flex shrink>
-            <v-tooltip right>
-              <v-btn
-                slot="activator"
-                :href="source"
-                icon
-                large
-                target="_blank"
-              >
-              <v-icon large>code</v-icon>
-              </v-btn>
-              <span>Source</span>
-            </v-tooltip>
-            <v-tooltip right>
-              <v-btn slot="activator" icon large href="https://codepen.io/johnjleider/pen/qxQWda" target="_blank">
-                <v-icon large>mdi-codepen</v-icon>
-              </v-btn>
-              <span>Codepen</span>
-            </v-tooltip>
-          </v-flex>
-        </v-layout>
-      </v-container> -->
       <v-container fluid fill-height>
         <v-layout justify-center align-center>
-          <div class="object-container">
+          <div class="object-container" id="print">
             <div v-for="(row, index) in this.lists" :key="row.length">
               <transition-group name="list-complete" tag="div" :key="'t'+row.length">
                 <span v-for="(item, index2) in row" :key="item.id" class="list-complete-item" :style="getStyle(item.id)">{{ item.value }}</span>
@@ -137,6 +104,9 @@
           </div>
           <div>Total: {{totalItems}}</div>
           <div>Rows: {{triangularNumber}}</div>
+          <v-btn absolute dark fab bottom right color="pink" :style="moveForBottomNavStyle" @click="printStack()">
+            <v-icon>print</v-icon>
+          </v-btn>
         </v-layout>
       </v-container>
     </v-content>
@@ -147,13 +117,21 @@
 </template>
 
 <script>
+import 'print-js'
 export default {
+  mounted: function () {
+    if (localStorage.items) {
+      this.items = JSON.parse(localStorage.items);
+    } else {
+      this.items = [ new Group(1, 'Cool Blues', '#82b1ff', [new Object(1.1, 'S'), new Object(1.2, 'T'), new Object(1.3, 'A')]),
+      new Group(2, 'Hot Reds', '#ff80ab', [new Object(2.1, 'C'), new Object(2.2, 'K'), new Object(2.3, 'A')]),
+      new Group(3, 'Leafy Greens', '#b9f6ca', [new Object(3.1, 'B'), new Object(3.2, 'L'), new Object(3.3, 'E'), new Object(3.4, 'S')]) ]
+    }
+  },
   data: () => ({
     drawer: false,
     dialog: false,
-    items: [ new Group(1, 'Cool Blues', '#82b1ff', [new Object(1.1, 'S'), new Object(1.2, 'T'), new Object(1.3, 'A')]),
-      new Group(2, 'Hot Reds', '#ff80ab', [new Object(2.1, 'C'), new Object(2.2, 'K'), new Object(2.3, 'A')]),
-      new Group(3, 'Leafy Greens', '#b9f6ca', [new Object(3.1, 'B'), new Object(3.2, 'L'), new Object(3.3, 'E'), new Object(3.4, 'S')]) ],
+    items: [],
     names: ["Collection", "Group", "Assemblage", "Assortment", "Compilation", "Lot", "Selection", "Set", "Accumulation", "Stack", "Kit", "Hoard", "Heap", "Grathering", "Cluster", "Clump", "Batch"],
     options: {
       borderRadius: 100
@@ -164,7 +142,21 @@ export default {
   props: {
     source: String
   },
+  watch: {
+    items: {
+    handler() {
+      localStorage.items = JSON.stringify(this.items);
+    },
+      deep: true,
+    },
+  },
   computed: {
+    moveForBottomNavStyle() {
+      return "bottom: 10px"
+      if (this.$vuetify.breakpoint.smAndDown) {
+        return "bottom: 32px"
+      }
+    },
     styles: function (i) {
       return {
         'color': this.VBColorToHEX(i)
@@ -203,6 +195,9 @@ export default {
     }
   },
   methods: {
+    printStack: function () {
+      printJS({printable: 'print', type: 'html', targetStyles: ['*']})
+    },
     updateGroup: function (color) {
       this.active.color = color.hex
     },
@@ -306,6 +301,7 @@ class Object {
   border-radius: 50%;
   overflow: hidden;
   text-align: center;
+  -webkit-print-color-adjust: exact !important;
 }
 .list-complete-item:empty:before {
   /* When Text is Not Present, Add An Empty Character in Order to Preserve Spacing */

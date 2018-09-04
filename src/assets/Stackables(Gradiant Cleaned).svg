@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 150.265 150.265">
+  <defs>
+    <linearGradient id="a">
+      <stop offset="0" stop-color="#00897b"/>
+      <stop offset="1" stop-color="#009688"/>
+    </linearGradient>
+    <linearGradient id="b">
+      <stop offset="0" stop-color="#009688"/>
+      <stop offset="1" stop-color="#26a69a"/>
+    </linearGradient>
+    <linearGradient id="c">
+      <stop offset="0" stop-color="#26a69a"/>
+      <stop offset="1" stop-color="#4db6ac"/>
+    </linearGradient>
+    <linearGradient xlink:href="#a" id="d" x1=".132" y1="150.132" x2="25.132" y2="100.132" gradientUnits="userSpaceOnUse"/>
+    <linearGradient xlink:href="#a" id="f" x1="150.132" y1="150.132" x2="125.132" y2="100.132" gradientUnits="userSpaceOnUse"/>
+    <linearGradient xlink:href="#a" id="e" x1="74.883" y1="150.015" x2="75.132" y2="100.132" gradientUnits="userSpaceOnUse"/>
+    <linearGradient xlink:href="#b" id="g" x1="25.132" y1="100.132" x2="50.132" y2="50.132" gradientUnits="userSpaceOnUse"/>
+    <linearGradient xlink:href="#b" id="h" gradientUnits="userSpaceOnUse" x1="125.132" y1="100.132" x2="100.132" y2="50.132"/>
+    <linearGradient xlink:href="#c" id="i" gradientUnits="userSpaceOnUse" x1="75.132" y1="50.132" x2="74.072" y2=".062"/>
+  </defs>
+  <rect width="50" height="50" x=".132" y="100.132" ry="11.731" fill="url(#d)" stroke="#00897b" stroke-width=".265"/>
+  <rect width="50" height="50" x="50.132" y="100.132" ry="11.731" fill="url(#e)" stroke="#00897b" stroke-width=".265"/>
+  <rect width="50" height="50" x="100.132" y="100.132" ry="11.731" fill="url(#f)" stroke="#00897b" stroke-width=".265"/>
+  <rect width="50" height="50" x="25.132" y="50.132" ry="11.731" fill="url(#g)" stroke="#009688" stroke-width=".265"/>
+  <rect width="50" height="50" x="75.132" y="50.132" ry="11.731" fill="url(#h)" stroke="#009688" stroke-width=".265"/>
+  <rect width="50" height="50" x="50.132" y=".132" ry="11.731" fill="url(#i)" stroke="#26a69a" stroke-width=".265"/>
+</svg>
