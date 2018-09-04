@@ -60,7 +60,7 @@
       </v-card>
     </v-dialog>
     </v-navigation-drawer>
-    <v-toolbar app fixed clipped-left>
+    <v-toolbar app fixed clipped-left height="56">
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <a href="#" class="d-flex">
         <img :src="require('@/assets/Stackables(Gradiant Cleaned).svg')" width="50px" height="50px"/>
@@ -94,17 +94,13 @@
     </v-toolbar>
     <v-content>
       <v-container fluid fill-height>
-        <v-layout justify-center align-center>
-          <div class="object-container" id="print" :style="cssProps" ref="canvas">
-            <div v-for="(row) in this.lists" :key="row.length" style="white-space: nowrap">
-              <transition-group name="list-complete" tag="div" :key="'t'+row.length">
-                <span v-for="(item) in row" :key="item.id" class="list-complete-item" :style="getStyle(item.id)">{{ item.value }}</span>
-              </transition-group>
-            </div>
+        <div class="object-container" id="print" :style="cssProps" ref="canvas">
+          <div v-for="(row) in this.lists" :key="row.length" style="white-space: nowrap">
+            <transition-group name="list-complete" tag="div" :key="'t'+row.length">
+              <span v-for="(item) in row" :key="item.id" class="list-complete-item" :style="getStyle(item.id)">{{ item.value }}</span>
+            </transition-group>
           </div>
-          <!-- <div>Total: {{totalItems}}</div>
-          <div>Rows: {{triangularNumber}}</div> -->
-        </v-layout>
+        </div>
       </v-container>
     </v-content>
     <v-footer app fixed>
@@ -155,10 +151,7 @@ export default {
   },
   computed: {
     moveForBottomNavStyle () {
-      if (this.$vuetify.breakpoint.smAndDown) {
-        return "bottom: 32px"
-      }
-      return 'bottom: 70px'
+        return "bottom: 38px"
     },
     styles: function (i) {
       return {
@@ -197,8 +190,7 @@ export default {
       return correct
     },
     size: function () {
-      console.log(this.$vuetify.breakpoint.smAndDown)
-      return (Math.min(this.fullHeight - (this.$vuetify.breakpoint.smAndDown ? 0 : 16), this.fullWidth) / this.triangularNumber) + 'px'
+      return (Math.min(this.fullHeight, this.fullWidth) / this.triangularNumber) + 'px'
     },
     cssProps: function () {
       return {
@@ -353,8 +345,5 @@ class Object {
   #print, #print * {
     visibility: visible;
   }
-}
-.v-content{
-  /* padding: 56px 0px 32px !important */
 }
 </style>
