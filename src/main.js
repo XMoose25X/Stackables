@@ -19,6 +19,7 @@ import {
 } from 'vuetify'
 import '../node_modules/vuetify/src/stylus/app.styl'
 import { Slider } from 'vue-color'
+import draggable from 'vuedraggable'
 
 Vue.use(Vuetify, {
   components: {
@@ -34,7 +35,8 @@ Vue.use(Vuetify, {
     VTooltip,
     VCard,
     VDialog,
-    'color-picker': Slider
+    'color-picker': Slider,
+    draggable
   },
   theme: {
     primary: '#ee44aa',

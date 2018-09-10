@@ -2,43 +2,47 @@
   <v-app id="inspire" dark>
     <v-navigation-drawer v-model="drawer" hide-overlay clipped temporary app :stateless="dialog">
       <v-list dense>
-        <v-list-group v-for="(group, index) in items" v-bind:key="index" no-action>
-          <v-list-tile slot="activator">
-            <v-list-tile-action>
-              <v-icon :color="group.color">group_work</v-icon>
-            </v-list-tile-action>
-            <v-list-tile-title>{{group.name}}</v-list-tile-title>
-          </v-list-tile>
-          <v-list-tile @click="dialog=true; colors=group.color; active=group" ripple>
-            <v-list-tile-title>Change Color</v-list-tile-title>
-            <v-list-tile-action>
-              <v-icon>color_lens</v-icon>
-            </v-list-tile-action>
-        </v-list-tile>
-         <v-list-tile @click="add(group.id)" ripple>
-          <v-list-tile-title>Add Item</v-list-tile-title>
-            <v-list-tile-action>
-              <v-icon color="green">add</v-icon>
-            </v-list-tile-action>
-          </v-list-tile>
-          <v-list-group no-action sub-group>
+        <draggable v-model="items">
+          <v-list-group v-for="(group, index) in items" v-bind:key="index" lazy no-action v-model="group.active">
             <v-list-tile slot="activator">
-              <v-list-tile-title>Items</v-list-tile-title>
-            </v-list-tile>
-            <v-list-tile v-for="(object, index2) in group.list" :key="object.id">
-              <v-list-tile-title v-text="object.value"></v-list-tile-title>
               <v-list-tile-action>
-                <v-icon @click="removeItemFromGroup(index, index2)">remove</v-icon>
+                <v-icon :color="group.color">group_work</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-title>{{group.name}}</v-list-tile-title>
+            </v-list-tile>
+            <v-list-tile @click="dialog=true; colors=group.color; active=group" ripple>
+              <v-list-tile-title>Change Color</v-list-tile-title>
+              <v-list-tile-action>
+                <v-icon>color_lens</v-icon>
               </v-list-tile-action>
             </v-list-tile>
+            <v-list-tile @click="add(group.id)" ripple>
+              <v-list-tile-title>Add Item</v-list-tile-title>
+                <v-list-tile-action>
+                  <v-icon color="green">add</v-icon>
+                </v-list-tile-action>
+              </v-list-tile>                
+              <v-list-group no-action sub-group>
+                <v-list-tile slot="activator">
+                  <v-list-tile-title>Items</v-list-tile-title>
+                </v-list-tile>
+                <draggable v-model="group.list">
+                  <v-list-tile v-for="(object, index2) in group.list" :key="object.id">
+                    <v-list-tile-title v-text="object.value"></v-list-tile-title>
+                    <v-list-tile-action>
+                      <v-icon @click="removeItemFromGroup(index, index2)">remove</v-icon>
+                    </v-list-tile-action>
+                  </v-list-tile>
+                </draggable>
+              </v-list-group>
+              <v-list-tile @click="removeGroup(group.id)" ripple>
+                <v-list-tile-title>Delete Group</v-list-tile-title>
+                <v-list-tile-action>
+                  <v-icon color="red">remove_circle_outline</v-icon>
+                </v-list-tile-action>
+              </v-list-tile>
           </v-list-group>
-          <v-list-tile @click="removeGroup(group.id)" ripple>
-            <v-list-tile-title>Delete Group</v-list-tile-title>
-            <v-list-tile-action>
-              <v-icon color="red">remove_circle_outline</v-icon>
-            </v-list-tile-action>
-          </v-list-tile>
-        </v-list-group>
+        </draggable>
         <v-list-tile @click="addGroup()" ripple>
           <v-list-tile-title>Add Group</v-list-tile-title>
           <v-list-tile-action>
@@ -120,9 +124,9 @@ export default {
     if (localStorage.items) {
       this.items = JSON.parse(localStorage.items)
     } else {
-      this.items = [ new Group(1, 'Cool Blues', '#82b1ff', [new Object(1.1, 'S'), new Object(1.2, 'T'), new Object(1.3, 'A')]),
-        new Group(2, 'Hot Reds', '#ff80ab', [new Object(2.1, 'C'), new Object(2.2, 'K'), new Object(2.3, 'A')]),
-        new Group(3, 'Leafy Greens', '#b9f6ca', [new Object(3.1, 'B'), new Object(3.2, 'L'), new Object(3.3, 'E'), new Object(3.4, 'S')]) ]
+      this.items = [ new Group(1, false, 'Cool Blues', '#82b1ff', [new Object(1.1, 'S'), new Object(1.2, 'T'), new Object(1.3, 'A')]),
+        new Group(2, false, 'Hot Reds', '#ff80ab', [new Object(2.1, 'C'), new Object(2.2, 'K'), new Object(2.3, 'A')]),
+        new Group(3, false, 'Leafy Greens', '#b9f6ca', [new Object(3.1, 'B'), new Object(3.2, 'L'), new Object(3.3, 'E'), new Object(3.4, 'S')]) ]
     }
   },
   data: () => ({
@@ -242,7 +246,7 @@ export default {
       this.items[groupId].list.splice(objectId, 1)
     },
     addGroup: function () {
-      this.items.push(new Group(this.generateGroupId(), this.names[this.randomInt(this.names.length)], this.random_rgba(), []))
+      this.items.push(new Group(this.generateGroupId(), false, this.names[this.randomInt(this.names.length)], this.random_rgba(), []))
     },
     shuffle: function (id) {
       var index = this.getIndexOfGroup(id)
@@ -285,8 +289,9 @@ export default {
   }
 }
 class Group {
-  constructor (id, name, color, list) {
+  constructor (id, active, name, color, list) {
     this.id = id
+    this.active = active
     this.name = name
     this.color = color
     this.list = list
@@ -338,12 +343,12 @@ class Object {
 .list-complete-move {
   margin: auto;
 }
-@media print {
+/* @media print {
   * {
     visibility: hidden;
   }
   #print, #print * {
     visibility: visible;
   }
-}
+} */
 </style>
