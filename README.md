@@ -1,7 +1,9 @@
 # Stackables
 
-> Single Page Application used for visually organizing stackable objects.
-> Current Bug with Navigation Drawer - https://github.com/vuetifyjs/vuetify/issues/4808
+## [Live Site](https://xmoose25x.github.io/Stackables/)
+
+Single Page Application used for visually organizing stackable objects. This helps for neatly organizing your collectables such as [Kawaii Cubes](https://web.archive.org/web/20180319212907/http://kawaiicubes.com/), [Disney's Tsum Tsums](https://characters.disney.com/disney-tsum-tsum), and [Stackable Squad Squishmallows](https://squishmallows.com/stackables-squad/) among many others.
+
 
 ## Build Setup
 
@@ -29,3 +31,6 @@ npm test
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+
+### Known Issues
+* Current Bug with Navigation Drawer - https://github.com/vuetifyjs/vuetify/issues/4808

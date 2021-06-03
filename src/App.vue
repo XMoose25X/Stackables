@@ -155,7 +155,7 @@ export default {
   },
   computed: {
     moveForBottomNavStyle () {
-        return "bottom: 38px"
+      return 'bottom: 38px'
     },
     styles: function (i) {
       return {
@@ -242,7 +242,7 @@ export default {
       this.items[index].list.splice(0)
       this.items.splice(index, 1)
     },
-    removeItemFromGroup: function (groupId, objectId){
+    removeItemFromGroup: function (groupId, objectId) {
       this.items[groupId].list.splice(objectId, 1)
     },
     addGroup: function () {
