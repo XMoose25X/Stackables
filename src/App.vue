@@ -121,12 +121,12 @@ export default {
   mounted: function () {
     window.addEventListener('resize', this.handleResize)
     this.handleResize()
-    if (localStorage.items) {
-      this.items = JSON.parse(localStorage.items)
+    if (window.localStorage && window.localStorage.items) {
+      this.items = JSON.parse(window.localStorage.items)
     } else {
-      this.items = [ new Group(1, false, 'Cool Blues', '#82b1ff', [new Object(1.1, 'S'), new Object(1.2, 'T'), new Object(1.3, 'A')]),
-        new Group(2, false, 'Hot Reds', '#ff80ab', [new Object(2.1, 'C'), new Object(2.2, 'K'), new Object(2.3, 'A')]),
-        new Group(3, false, 'Leafy Greens', '#b9f6ca', [new Object(3.1, 'B'), new Object(3.2, 'L'), new Object(3.3, 'E'), new Object(3.4, 'S')]) ]
+      this.items = [ new Group(1, false, 'Cool Blues', '#82b1ff', [new Item(1.1, 'S'), new Item(1.2, 'T'), new Item(1.3, 'A')]),
+        new Group(2, false, 'Hot Reds', '#ff80ab', [new Item(2.1, 'C'), new Item(2.2, 'K'), new Item(2.3, 'A')]),
+        new Group(3, false, 'Leafy Greens', '#b9f6ca', [new Item(3.1, 'B'), new Item(3.2, 'L'), new Item(3.3, 'E'), new Item(3.4, 'S')]) ]
     }
   },
   data: () => ({
@@ -149,7 +149,9 @@ export default {
   watch: {
     items: {
       handler () {
-        localStorage.items = JSON.stringify(this.items)
+        if (window.localStorage) {
+          window.localStorage.items = JSON.stringify(this.items)
+        }
       },
       deep: true
     }
@@ -181,7 +183,7 @@ export default {
       /* Add in Empty Objects when the number is not entirely triangular */
       for (var i = 0; i < this.totalSize - this.totalItems; i++) {
         /* Make the id a negative number to be able to identify later */
-        results.push(new Object(-(i + 1), ''))
+        results.push(new Item(-(i + 1), ''))
       }
       this.items.forEach(function (group) {
         group.list.forEach(function (item) {
@@ -211,8 +213,8 @@ export default {
     },
     handleResize (event) {
       var area = this.$refs.canvas
-      this.fullHeight = area.clientHeight
-      this.fullWidth = area.clientWidth
+      this.fullHeight = area ? area.clientHeight : 0
+      this.fullWidth =  area ? area.clientWidth : 0
     },
     updateGroup: function (color) {
       this.active.color = color.hex
@@ -221,7 +223,7 @@ export default {
       return Math.floor(Math.random() * (max + 1))
     },
     add: function (id) {
-      this.items[this.getIndexOfGroup(id)].list.push(new Object(this.generateItemId(id), 'new'))
+      this.items[this.getIndexOfGroup(id)].list.push(new Item(this.generateItemId(id), 'new'))
     },
     generateItemId: function (id) {
       var index = this.getIndexOfGroup(id)
@@ -260,7 +262,7 @@ export default {
       }
     },
     getIndexOfGroup: function (id) {
-      return this.items.findIndex(group => group.id == id)
+      return this.items.findIndex(group => group.id === id)
     },
     getGroupIdFromItemId: function (itemId) {
       return parseInt((itemId.toString()).substring(0, (itemId.toString()).indexOf('.')))
@@ -281,7 +283,9 @@ export default {
       }
     },
     random_rgba: function () {
-      var o = Math.round, r = Math.random, s = 255
+      var o = Math.round
+      var r = Math.random
+      var s = 255
       return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + r().toFixed(1) + ')'
     },
     getHeight: function () {
@@ -302,7 +306,7 @@ class Group {
     this.list.splice(index, 1)
   }
 }
-class Object {
+class Item {
   constructor (id, value) {
     this.id = id
     this.value = value

@@ -12,7 +12,8 @@ module.exports = {
   },
   transform: {
     '^.+\\.js$': '<rootDir>/node_modules/babel-jest',
-    '.*\\.(vue)$': '<rootDir>/node_modules/vue-jest'
+    '.*\\.(vue)$': '<rootDir>/node_modules/vue-jest',
+    '^.+\\.svg$': '<rootDir>/test/unit/svgTransform.js'
   },
   testPathIgnorePatterns: [
     '<rootDir>/test/e2e'
