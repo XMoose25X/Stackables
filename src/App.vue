@@ -108,7 +108,7 @@
       </v-container>
     </v-content>
     <v-footer app fixed>
-      <span>Mathew Moose &copy; 2018</span>
+      <span>{{copyright}}</span>
     </v-footer>
     <v-btn absolute dark fab bottom right color="pink" :style="moveForBottomNavStyle" @click="printStackables()">
       <v-icon>print</v-icon>
@@ -130,6 +130,7 @@ export default {
     }
   },
   data: () => ({
+    copyright: 'Mathew Moose © ' + new Date().getFullYear(),
     drawer: false,
     dialog: false,
     items: [],
